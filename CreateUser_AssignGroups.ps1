@@ -1,5 +1,6 @@
 ﻿Install-Module Microsoft.Graph
-Connect-MgGraph -Scopes User.ReadWrite.All -TenantId ""
+$Scopes = @("User.ReadWrite.All","group.ReadWrite.All")
+Connect-MgGraph -scopes $Scopes -TenantId "2210c954-de6e-4f93-82f9-a5ab5ba1ed18"
 
 
 # Prompt user to enter information
@@ -47,10 +48,10 @@ if ($choice -eq "1") {
     $preferredlanguage = "en-US"
 } elseif ($choice -eq "2") {
     $usagelocation = "NL"
-    $streetAddress = ""
-    $city = ""
-    $country = ""
-    $postalCode = ""
+    $streetAddress = "Elizabeth Cady Stantonplein 435"
+    $city = "Amsterdam"
+    $country = "Netherlands"
+    $postalCode = "1102BL"
 }
 
 # Function to generate a random password
@@ -67,15 +68,17 @@ function Generate-RandomPassword {
 # Generate random password and domain name
 $randomPassword = Generate-RandomPassword
 
-$domainOptions = @("", "", "", "")
+$domainOptions = @("4bf4rx.onmicrosoft.com")
 Write-Host "Choose a domain:"
 for ($i = 0; $i -lt $domainOptions.Count; $i++) {
     Write-Host "$($i+1). $($domainOptions[$i])"
 }
-$domainChoice = Read-Host -Prompt "Enter 1, 2, 3, 4"
+$domainChoice = Read-Host -Prompt "Enter 1" 
 $selectedDomain = $domainOptions[$domainChoice - 1]
 
 $domainname = $selectedDomain
+
+
 
 # Capitalize names and job title
 $givenname = Capitalize-EveryWord -inputString $givenname
@@ -124,25 +127,25 @@ $user = Get-MgUser -Filter "userPrincipalName eq '$userPrincipalName'"
 if ($user) {
     $userId = $user.Id
     Import-Module Microsoft.Graph.Groups
-    $groupIds = @("")
+    $groupIds = @("dc0858d5-d2b7-4570-b52e-52b26ca028bb")
     foreach ($groupId in $groupIds) {
         New-MgGroupMember -GroupId $groupId -DirectoryObjectId $userId
     }
 
 if ($choice -eq "2") {
-    New-MgGroupMember -GroupId "" -DirectoryObjectId $userId
-    Write-Host "Added to Group: Everyone - NL"
+    New-MgGroupMember -GroupId "70be3aea-cbe8-4e5b-83ef-6237177fdd9c" -DirectoryObjectId $userId
+    Write-Host "Added to Group: Sales and Marketing"
 } elseif ($choice -eq "1") {
-    New-MgGroupMember -GroupId "" -DirectoryObjectId $userId
-    Write-Host "Added to Group: Everyone - EN"
+    New-MgGroupMember -GroupId "b1aa6e5a-ff44-4562-9feb-f21e92d40491" -DirectoryObjectId $userId
+    Write-Host "Added to Group: Retail"
 }
 
 Write-Host "Added to Group: Everyone"
-Write-Host "Does the user need a E3 License?"
+Write-Host "Does the user need a E5 License?"
 $license = Read-Host -Prompt "Enter yes or no"
 # Based on user's choice, set location information
 if ($license -eq "yes") {
-    New-MgGroupMember -GroupId "" -DirectoryObjectId $userId
+    New-MgGroupMember -GroupId "941166ab-d6ba-42fa-ace6-ea53e460430d" -DirectoryObjectId $userId
     Write-Host "Added to Group: License Microsoft 365 E3"
     Write-Host "Please manually assign - Distribution Groups" -ForegroundColor Yellow
 } elseif ($choice -eq "no") {
